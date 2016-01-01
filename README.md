@@ -1,1 +1,1 @@
-JQuery library for communicating with a database server
+JavaScript library for communicating with a database server
