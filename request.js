@@ -1,11 +1,23 @@
 //-----------------------------------------------------------------
-VmAPI.request=function(options){
+(function(){
+	var _token="";
+	VmAPI.set_token=function(token){
+  		_token=token;
+  	};
+  	VmAPI.request=function(options){
+  		VmAPI.request(_token,options)
+  	};
+	VmAPI.tttt=function(){
+  		return _token;
+  	};
+}());
+VmAPI._request=function(token,options){
 	var data=options.data;
 	var call_back=options.call_back;
 	VmFramework.ajax_server_error=0;
 	var url=VmFramework.api_base+'api.aspx';
 	$.ajax({
-        type: "POST", 
+        type: "POST",
         url: url,
         contentType: "application/json",
         charset:"utf-8",
@@ -21,13 +33,16 @@ VmAPI.request=function(options){
 			}
 		},
 		dataFilter: VmAPI.request_filter,
+		beforeSend:function(jqXHR,settings){
+		    jqXHR.setRequestHeader('Authorization', token);
+		},
 	})
 };
 //-----------------------------------------------------------------
 VmAPI.request_filter=function(c){
 	var a=$.parseJSON(c);
 	if(a.Error!=undefined){
-		alert("Server side error: "+a.Error); 
+		alert("Server side error: "+a.Error);
 		VmFramework.ajax_server_error=1;
 		if(typeof(VmFramework.submit_div)!=='undefined' && VmFramework.submit_div!=""){
    			$('#D'+VmFramework.submit_div).triggerHandler('submit_failed');
@@ -36,5 +51,3 @@ VmAPI.request_filter=function(c){
 	return c;
 }
 //-----------------------------------------------------------------
-
-
